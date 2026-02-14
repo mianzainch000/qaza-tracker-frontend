@@ -44,15 +44,18 @@
 }
 
 .dateInput {
-  padding: 8px;
+  width: 100%;
+  padding: 10px;
   outline: none;
-  font-size: 0.85rem;
+  display: block;
+  max-width: 100%;
+  font-size: 1rem;
   border-radius: 8px;
+  box-sizing: border-box;
   color: var(--text-main);
   background-color: var(--card-bg);
   border: 1px solid var(--border-color);
 }
-
 .grid {
   gap: 6px;
   display: grid;

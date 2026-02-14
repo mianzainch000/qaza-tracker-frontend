@@ -21,7 +21,7 @@ const History = () => {
     const [selectedId, setSelectedId] = useState(null);
 
     const savedRows = getCookie("rowsPerPage");
-    const [rowsPerPage, setRowsPerPage] = useState(savedRows ? Number(savedRows) : 10);
+    const [rowsPerPage, setRowsPerPage] = useState(savedRows ? Number(savedRows) : 5);
     const [currentPage, setCurrentPage] = useState(1);
 
     const fetchHistory = async () => {
