@@ -1,4 +1,5 @@
 "use client";
+import React from "react";
 import axios from "axios";
 import Loader from "@/components/Loader";
 import { useState, useEffect } from "react";
@@ -19,7 +20,9 @@ const History = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedId, setSelectedId] = useState(null);
     const savedRows = getCookie("rowsPerPage");
-    const [rowsPerPage, setRowsPerPage] = useState(savedRows ? Number(savedRows) : 10);
+    const [rowsPerPage, setRowsPerPage] = useState(
+        savedRows ? Number(savedRows) : 5,
+    );
     const [currentPage, setCurrentPage] = useState(1);
 
     const fetchHistory = async () => {
@@ -28,7 +31,7 @@ const History = () => {
             const res = await axios.get("home/api");
             if (res?.status === 200) {
                 const sortedLogs = (res.data.data || []).sort(
-                    (a, b) => new Date(b.date) - new Date(a.date)
+                    (a, b) => new Date(b.date) - new Date(a.date),
                 );
                 setLogs(sortedLogs);
             }
@@ -65,8 +68,26 @@ const History = () => {
         }
     };
 
-    const currentLogs = logs.slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage);
+    // --- Monthly Grouping Logic ---
+    const groupLogsByMonth = (data) => {
+        return data.reduce((groups, log) => {
+            const dateObj = new Date(log.date);
+            const monthYear = dateObj.toLocaleString("default", {
+                month: "long",
+                year: "numeric",
+            });
+            if (!groups[monthYear]) groups[monthYear] = [];
+            groups[monthYear].push(log);
+            return groups;
+        }, {});
+    };
+
+    const currentLogs = logs.slice(
+        (currentPage - 1) * rowsPerPage,
+        currentPage * rowsPerPage,
+    );
     const totalPages = Math.ceil(logs.length / rowsPerPage);
+    const groupedLogs = groupLogsByMonth(currentLogs);
 
     return (
         <div className={styles.pageWrapper}>
@@ -81,68 +102,141 @@ const History = () => {
 
             <div className={styles.homeMainContainer}>
                 <div className={styles.tableContainer}>
-                    <div className={styles.header}><h3>Qaza History</h3></div>
+                    <div className={styles.header}>
+                        <h3>Qaza History</h3>
+                    </div>
 
                     <div className={styles.tableWrapper}>
                         <table className={styles.historyTable}>
                             <thead className={styles.desktopOnlyHead}>
                                 <tr>
                                     <th className={styles.dateHead}>Date & Status</th>
-                                    <th>F</th><th>Z</th><th>A</th><th>M</th><th>I</th>
+                                    <th>F</th>
+                                    <th>Z</th>
+                                    <th>A</th>
+                                    <th>M</th>
+                                    <th>I</th>
                                     <th className={styles.actionHead}>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {currentLogs.length > 0 ? currentLogs.map((log) => {
-                                    // Har value ko number mein convert karna zaroori hai
-                                    const vals = [
-                                        Number(log.data.fajr || 0),
-                                        Number(log.data.zohar || 0),
-                                        Number(log.data.asar || 0),
-                                        Number(log.data.maghrib || 0),
-                                        Number(log.data.isha || 0)
-                                    ];
-                                    const isComplete = vals.every(v => v > 0);
-                                    let statusText = isComplete ? "COMPLETE" : "PENDING";
-                                    let statusClass = isComplete ? styles.statusComplete : styles.statusPending;
+                                {Object.keys(groupedLogs).length > 0 ? (
+                                    Object.entries(groupedLogs).map(([month, monthLogs]) => (
+                                        <React.Fragment key={month}>
+                                            {/* Monthly Header Row */}
+                                            <tr className={styles.monthDividerRow}>
+                                                <td colSpan="7" className={styles.monthDividerCell}>
+                                                    {month}
+                                                </td>
+                                            </tr>
 
-                                    return (
-                                        <tr key={log._id} className={styles.tableRow}>
-                                            <td className={`${styles.desktopCell} ${styles.dateCell}`}>
-                                                <div className={styles.dateText}>{log.date}</div>
-                                                <span className={statusClass}>{statusText}</span>
-                                            </td>
-                                            {vals.map((val, i) => (
-                                                <td key={i} className={`${styles.desktopCell} ${val > 0 ? styles.countDone : styles.countZero}`}>{val}</td>
-                                            ))}
-                                            <td className={`${styles.desktopCell} ${styles.actionCell}`}>
-                                                <div className={styles.actionBtns}>
-                                                    <span onClick={() => router.push(`/home?date=${log.date}`)} className={styles.iconBtn}>✏️</span>
-                                                    <span onClick={() => openDeleteModal(log._id)} className={styles.iconBtn}>🗑️</span>
-                                                </div>
-                                            </td>
+                                            {monthLogs.map((log) => {
+                                                const vals = [
+                                                    Number(log.data.fajr || 0),
+                                                    Number(log.data.zohar || 0),
+                                                    Number(log.data.asar || 0),
+                                                    Number(log.data.maghrib || 0),
+                                                    Number(log.data.isha || 0),
+                                                ];
+                                                const isComplete = vals.every((v) => v > 0);
+                                                let statusText = isComplete ? "COMPLETE" : "PENDING";
+                                                let statusClass = isComplete
+                                                    ? styles.statusComplete
+                                                    : styles.statusPending;
 
-                                            <td colSpan="7" className={styles.mobileCardCell}>
-                                                <div className={styles.mobileCard}>
-                                                    <div className={styles.cardHeader}>
-                                                        <span className={styles.cardDate}>{log.date}</span>
-                                                        <span className={statusClass}>{statusText}</span>
-                                                    </div>
-                                                    <div className={styles.cardBody}>
-                                                        {['F', 'Z', 'A', 'M', 'I'].map((label, i) => (
-                                                            <div key={i} className={styles.miniStat}><span>{label}</span><b>{vals[i]}</b></div>
+                                                return (
+                                                    <tr key={log._id} className={styles.tableRow}>
+                                                        {/* Desktop View Cells */}
+                                                        <td
+                                                            className={`${styles.desktopCell} ${styles.dateCell}`}
+                                                        >
+                                                            <div className={styles.dateText}>{log.date}</div>
+                                                            <span className={statusClass}>{statusText}</span>
+                                                        </td>
+                                                        {vals.map((val, i) => (
+                                                            <td
+                                                                key={i}
+                                                                className={`${styles.desktopCell} ${val > 0 ? styles.countDone : styles.countZero}`}
+                                                            >
+                                                                {val}
+                                                            </td>
                                                         ))}
-                                                    </div>
-                                                    <div className={styles.cardActions}>
-                                                        <span className={styles.mobileIcon} onClick={() => router.push(`/home?date=${log.date}`)}>✏️</span>
-                                                        <span className={styles.mobileIcon} onClick={() => openDeleteModal(log._id)}>🗑️</span>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    );
-                                }) : (
-                                    <tr><td colSpan="7" style={{ textAlign: 'center', padding: '30px', color: '#999' }}>No Records Found</td></tr>
+                                                        <td
+                                                            className={`${styles.desktopCell} ${styles.actionCell}`}
+                                                        >
+                                                            <div className={styles.actionBtns}>
+                                                                <span
+                                                                    onClick={() =>
+                                                                        router.push(`/home?date=${log.date}`)
+                                                                    }
+                                                                    className={styles.iconBtn}
+                                                                >
+                                                                    ✏️
+                                                                </span>
+                                                                <span
+                                                                    onClick={() => openDeleteModal(log._id)}
+                                                                    className={styles.iconBtn}
+                                                                >
+                                                                    🗑️
+                                                                </span>
+                                                            </div>
+                                                        </td>
+
+                                                        {/* Mobile Card View Cells */}
+                                                        <td colSpan="7" className={styles.mobileCardCell}>
+                                                            <div className={styles.mobileCard}>
+                                                                <div className={styles.cardHeader}>
+                                                                    <span className={styles.cardDate}>
+                                                                        {log.date}
+                                                                    </span>
+                                                                    <span className={statusClass}>
+                                                                        {statusText}
+                                                                    </span>
+                                                                </div>
+                                                                <div className={styles.cardBody}>
+                                                                    {["F", "Z", "A", "M", "I"].map((label, i) => (
+                                                                        <div key={i} className={styles.miniStat}>
+                                                                            <span>{label}</span>
+                                                                            <b>{vals[i]}</b>
+                                                                        </div>
+                                                                    ))}
+                                                                </div>
+                                                                <div className={styles.cardActions}>
+                                                                    <span
+                                                                        className={styles.mobileIcon}
+                                                                        onClick={() =>
+                                                                            router.push(`/home?date=${log.date}`)
+                                                                        }
+                                                                    >
+                                                                        ✏️
+                                                                    </span>
+                                                                    <span
+                                                                        className={styles.mobileIcon}
+                                                                        onClick={() => openDeleteModal(log._id)}
+                                                                    >
+                                                                        🗑️
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                );
+                                            })}
+                                        </React.Fragment>
+                                    ))
+                                ) : (
+                                    <tr>
+                                        <td
+                                            colSpan="7"
+                                            style={{
+                                                textAlign: "center",
+                                                padding: "30px",
+                                                color: "#999",
+                                            }}
+                                        >
+                                            No Records Found
+                                        </td>
+                                    </tr>
                                 )}
                             </tbody>
                         </table>
@@ -155,7 +249,11 @@ const History = () => {
                         totalPages={totalPages}
                         onPageChange={(p) => setCurrentPage(p)}
                         rowsPerPage={rowsPerPage}
-                        onRowsChange={(v) => { setRowsPerPage(v); setCurrentPage(1); setCookie("rowsPerPage", v); }}
+                        onRowsChange={(v) => {
+                            setRowsPerPage(v);
+                            setCurrentPage(1);
+                            setCookie("rowsPerPage", v);
+                        }}
                     />
                 )}
             </div>
