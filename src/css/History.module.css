@@ -209,44 +209,44 @@
 }
 
 .monthDividerCell {
-  padding: 12px 25px !important;
   font-weight: 800;
-  color: var(--primary-light);
   text-align: left;
   font-size: 0.9rem;
+  text-transform: uppercase;
+  color: var(--primary-light);
+  padding: 12px 25px !important;
   background: rgba(0, 0, 0, 0.03);
   border-left: 5px solid var(--primary-light);
-  text-transform: uppercase;
 }
 
 @media (max-width: 768px) {
   .monthDividerCell {
-    text-align: center;
     border-left: none;
-    background: transparent;
-    padding: 25px 10px 10px 10px !important;
-    color: var(--secondary);
     font-size: 1.1rem;
+    text-align: center;
+    background: transparent;
+    color: var(--secondary);
+    padding: 25px 10px 10px 10px !important;
   }
 }
 
 .downloadBtn {
-  background-color: var(--primary-color);
-  color: var(--button-text-color);
-  padding: 8px 16px;
-  border: none;
-  border-radius: var(--radius-md);
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 8px;
   transition:
     background 0.3s ease,
     transform 0.2s ease,
     box-shadow 0.2s ease;
+  gap: 8px;
+  border: none;
+  display: flex;
+  font-size: 14px;
+  cursor: pointer;
+  font-weight: 600;
+  padding: 8px 16px;
+  align-items: center;
   box-shadow: var(--shadow-sm);
+  color: var(--button-text-color);
+  border-radius: var(--radius-md);
+  background-color: var(--primary-color);
 }
 
 .downloadBtn:hover {
@@ -256,6 +256,6 @@
 }
 
 .downloadBtn:active {
-  transform: translateY(0);
   filter: brightness(0.8);
+  transform: translateY(0);
 }
