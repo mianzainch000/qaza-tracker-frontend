@@ -229,3 +229,33 @@
     font-size: 1.1rem;
   }
 }
+
+.downloadBtn {
+  background-color: var(--primary-color);
+  color: var(--button-text-color);
+  padding: 8px 16px;
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition:
+    background 0.3s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+  box-shadow: var(--shadow-sm);
+}
+
+.downloadBtn:hover {
+  filter: brightness(0.9);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.downloadBtn:active {
+  transform: translateY(0);
+  filter: brightness(0.8);
+}

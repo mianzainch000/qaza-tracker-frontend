@@ -76,34 +76,42 @@ const HomeContent = () => {
     // 🔥 Streak and Today Status Logic
     const getStreakInfo = (logs) => {
         if (!logs || logs.length === 0) return { streak: 0, todayDone: false };
+
         const today = getLocalDate();
-        const sortedLogs = [...logs].sort(
-            (a, b) => new Date(b.date) - new Date(a.date),
-        );
+
+        // 1. Sirf aaj ya aaj se purani dates filter karein (Future dates ignore)
+        const validLogs = logs.filter(log => log.date <= today);
+        const sortedLogs = [...validLogs].sort((a, b) => new Date(b.date) - new Date(a.date));
 
         const todayLog = sortedLogs.find((l) => l.date === today);
-        const totalToday = todayLog
-            ? Object.values(todayLog.data).reduce((a, b) => a + b, 0)
-            : 0;
+        const totalToday = todayLog ? Object.values(todayLog.data).reduce((a, b) => Number(a) + Number(b), 0) : 0;
         const todayDone = totalToday > 0;
 
         let streak = 0;
-        let curr = new Date();
-        if (!todayDone) curr.setDate(curr.getDate() - 1);
+        let checkDate = new Date();
 
-        while (true) {
-            const dateStr = curr.toISOString().split("T")[0];
+        if (!todayDone) {
+            checkDate.setDate(checkDate.getDate() - 1);
+        }
+
+        // 2. Safety Break: Loop ko tab tak chalayein jab tak pichle logs majood hain
+        while (streak < logs.length + 1) {
+            const year = checkDate.getFullYear();
+            const month = String(checkDate.getMonth() + 1).padStart(2, "0");
+            const day = String(checkDate.getDate()).padStart(2, "0");
+            const dateStr = `${year}-${month}-${day}`;
+
             const found = sortedLogs.find((l) => l.date === dateStr);
-            const dayTotal = found
-                ? Object.values(found.data).reduce((a, b) => a + b, 0)
-                : 0;
+            const dayTotal = found ? Object.values(found.data).reduce((a, b) => Number(a) + Number(b), 0) : 0;
+
             if (dayTotal > 0) {
                 streak++;
-                curr.setDate(curr.getDate() - 1);
+                checkDate.setDate(checkDate.getDate() - 1);
             } else {
                 break;
             }
         }
+
         return { streak, todayDone };
     };
 

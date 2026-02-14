@@ -1,15 +1,15 @@
 "use client";
-import React from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
-import Loader from "@/components/Loader";
-import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import styles from "@/css/History.module.css";
-import Pagination from "@/components/Pagination";
-import { useSnackbar } from "@/components/Snackbar";
 import { getCookie, setCookie } from "cookies-next";
+import Loader from "@/components/Loader";
+import Pagination from "@/components/Pagination";
 import ConfirmModal from "@/components/ConfirmModal";
+import { useSnackbar } from "@/components/Snackbar";
 import handleAxiosError from "@/components/HandleAxiosError";
+import { exportToPDF } from "@/components/exportPDF";
+import styles from "@/css/History.module.css";
 
 const History = () => {
     const router = useRouter();
@@ -19,10 +19,9 @@ const History = () => {
     const [logs, setLogs] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedId, setSelectedId] = useState(null);
+
     const savedRows = getCookie("rowsPerPage");
-    const [rowsPerPage, setRowsPerPage] = useState(
-        savedRows ? Number(savedRows) : 5,
-    );
+    const [rowsPerPage, setRowsPerPage] = useState(savedRows ? Number(savedRows) : 10);
     const [currentPage, setCurrentPage] = useState(1);
 
     const fetchHistory = async () => {
@@ -31,7 +30,7 @@ const History = () => {
             const res = await axios.get("home/api");
             if (res?.status === 200) {
                 const sortedLogs = (res.data.data || []).sort(
-                    (a, b) => new Date(b.date) - new Date(a.date),
+                    (a, b) => new Date(b.date) - new Date(a.date)
                 );
                 setLogs(sortedLogs);
             }
@@ -42,13 +41,16 @@ const History = () => {
         }
     };
 
-    useEffect(() => {
-        fetchHistory();
-    }, []);
+    useEffect(() => { fetchHistory(); }, []);
 
-    const openDeleteModal = (id) => {
-        setSelectedId(id);
-        setIsModalOpen(true);
+    const groupLogsByMonth = (data) => {
+        return data.reduce((groups, log) => {
+            const dateObj = new Date(log.date);
+            const monthYear = dateObj.toLocaleString("default", { month: "long", year: "numeric" });
+            if (!groups[monthYear]) groups[monthYear] = [];
+            groups[monthYear].push(log);
+            return groups;
+        }, {});
     };
 
     const handleDelete = async () => {
@@ -68,24 +70,7 @@ const History = () => {
         }
     };
 
-    // --- Monthly Grouping Logic ---
-    const groupLogsByMonth = (data) => {
-        return data.reduce((groups, log) => {
-            const dateObj = new Date(log.date);
-            const monthYear = dateObj.toLocaleString("default", {
-                month: "long",
-                year: "numeric",
-            });
-            if (!groups[monthYear]) groups[monthYear] = [];
-            groups[monthYear].push(log);
-            return groups;
-        }, {});
-    };
-
-    const currentLogs = logs.slice(
-        (currentPage - 1) * rowsPerPage,
-        currentPage * rowsPerPage,
-    );
+    const currentLogs = logs.slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage);
     const totalPages = Math.ceil(logs.length / rowsPerPage);
     const groupedLogs = groupLogsByMonth(currentLogs);
 
@@ -104,6 +89,11 @@ const History = () => {
                 <div className={styles.tableContainer}>
                     <div className={styles.header}>
                         <h3>Qaza History</h3>
+                        <div style={{ display: 'flex', justifyContent: 'center', marginTop: '10px' }}>
+                            <button onClick={() => exportToPDF(logs)} className={styles.downloadBtn}>
+                                📥 Export PDF
+                            </button>
+                        </div>
                     </div>
 
                     <div className={styles.tableWrapper}>
@@ -111,11 +101,7 @@ const History = () => {
                             <thead className={styles.desktopOnlyHead}>
                                 <tr>
                                     <th className={styles.dateHead}>Date & Status</th>
-                                    <th>F</th>
-                                    <th>Z</th>
-                                    <th>A</th>
-                                    <th>M</th>
-                                    <th>I</th>
+                                    <th>F</th><th>Z</th><th>A</th><th>M</th><th>I</th>
                                     <th className={styles.actionHead}>Actions</th>
                                 </tr>
                             </thead>
@@ -123,99 +109,59 @@ const History = () => {
                                 {Object.keys(groupedLogs).length > 0 ? (
                                     Object.entries(groupedLogs).map(([month, monthLogs]) => (
                                         <React.Fragment key={month}>
-                                            {/* Monthly Header Row */}
                                             <tr className={styles.monthDividerRow}>
-                                                <td colSpan="7" className={styles.monthDividerCell}>
-                                                    {month}
-                                                </td>
+                                                <td colSpan="7" className={styles.monthDividerCell}>{month}</td>
                                             </tr>
-
                                             {monthLogs.map((log) => {
-                                                const vals = [
-                                                    Number(log.data.fajr || 0),
-                                                    Number(log.data.zohar || 0),
-                                                    Number(log.data.asar || 0),
-                                                    Number(log.data.maghrib || 0),
-                                                    Number(log.data.isha || 0),
-                                                ];
-                                                const isComplete = vals.every((v) => v > 0);
-                                                let statusText = isComplete ? "COMPLETE" : "PENDING";
-                                                let statusClass = isComplete
-                                                    ? styles.statusComplete
-                                                    : styles.statusPending;
+                                                const vals = {
+                                                    fajr: Number(log.data.fajr || 0),
+                                                    zohar: Number(log.data.zohar || 0),
+                                                    asar: Number(log.data.asar || 0),
+                                                    maghrib: Number(log.data.maghrib || 0),
+                                                    isha: Number(log.data.isha || 0)
+                                                };
+                                                const isComplete = Object.values(vals).every(v => v > 0);
 
                                                 return (
                                                     <tr key={log._id} className={styles.tableRow}>
-                                                        {/* Desktop View Cells */}
-                                                        <td
-                                                            className={`${styles.desktopCell} ${styles.dateCell}`}
-                                                        >
+                                                        {/* Desktop Cells */}
+                                                        <td className={`${styles.desktopCell} ${styles.dateCell}`}>
                                                             <div className={styles.dateText}>{log.date}</div>
-                                                            <span className={statusClass}>{statusText}</span>
+                                                            <span className={isComplete ? styles.statusComplete : styles.statusPending}>
+                                                                {isComplete ? "COMPLETE" : "PENDING"}
+                                                            </span>
                                                         </td>
-                                                        {vals.map((val, i) => (
-                                                            <td
-                                                                key={i}
-                                                                className={`${styles.desktopCell} ${val > 0 ? styles.countDone : styles.countZero}`}
-                                                            >
-                                                                {val}
-                                                            </td>
-                                                        ))}
-                                                        <td
-                                                            className={`${styles.desktopCell} ${styles.actionCell}`}
-                                                        >
+                                                        <td className={`${styles.desktopCell} ${vals.fajr > 0 ? styles.countDone : styles.countZero}`}>{vals.fajr}</td>
+                                                        <td className={`${styles.desktopCell} ${vals.zohar > 0 ? styles.countDone : styles.countZero}`}>{vals.zohar}</td>
+                                                        <td className={`${styles.desktopCell} ${vals.asar > 0 ? styles.countDone : styles.countZero}`}>{vals.asar}</td>
+                                                        <td className={`${styles.desktopCell} ${vals.maghrib > 0 ? styles.countDone : styles.countZero}`}>{vals.maghrib}</td>
+                                                        <td className={`${styles.desktopCell} ${vals.isha > 0 ? styles.countDone : styles.countZero}`}>{vals.isha}</td>
+                                                        <td className={`${styles.desktopCell} ${styles.actionCell}`}>
                                                             <div className={styles.actionBtns}>
-                                                                <span
-                                                                    onClick={() =>
-                                                                        router.push(`/home?date=${log.date}`)
-                                                                    }
-                                                                    className={styles.iconBtn}
-                                                                >
-                                                                    ✏️
-                                                                </span>
-                                                                <span
-                                                                    onClick={() => openDeleteModal(log._id)}
-                                                                    className={styles.iconBtn}
-                                                                >
-                                                                    🗑️
-                                                                </span>
+                                                                <span onClick={() => router.push(`/home?date=${log.date}`)} className={styles.iconBtn}>✏️</span>
+                                                                <span onClick={() => { setSelectedId(log._id); setIsModalOpen(true); }} className={styles.iconBtn}>🗑️</span>
                                                             </div>
                                                         </td>
 
-                                                        {/* Mobile Card View Cells */}
+                                                        {/* Mobile Card View */}
                                                         <td colSpan="7" className={styles.mobileCardCell}>
                                                             <div className={styles.mobileCard}>
                                                                 <div className={styles.cardHeader}>
-                                                                    <span className={styles.cardDate}>
-                                                                        {log.date}
-                                                                    </span>
-                                                                    <span className={statusClass}>
-                                                                        {statusText}
+                                                                    <div className={styles.cardDate}>{log.date}</div>
+                                                                    <span className={isComplete ? styles.statusComplete : styles.statusPending}>
+                                                                        {isComplete ? "COMPLETE" : "PENDING"}
                                                                     </span>
                                                                 </div>
                                                                 <div className={styles.cardBody}>
-                                                                    {["F", "Z", "A", "M", "I"].map((label, i) => (
-                                                                        <div key={i} className={styles.miniStat}>
-                                                                            <span>{label}</span>
-                                                                            <b>{vals[i]}</b>
-                                                                        </div>
-                                                                    ))}
+                                                                    <div className={styles.miniStat}><span>F</span><b>{vals.fajr}</b></div>
+                                                                    <div className={styles.miniStat}><span>Z</span><b>{vals.zohar}</b></div>
+                                                                    <div className={styles.miniStat}><span>A</span><b>{vals.asar}</b></div>
+                                                                    <div className={styles.miniStat}><span>M</span><b>{vals.maghrib}</b></div>
+                                                                    <div className={styles.miniStat}><span>I</span><b>{vals.isha}</b></div>
                                                                 </div>
                                                                 <div className={styles.cardActions}>
-                                                                    <span
-                                                                        className={styles.mobileIcon}
-                                                                        onClick={() =>
-                                                                            router.push(`/home?date=${log.date}`)
-                                                                        }
-                                                                    >
-                                                                        ✏️
-                                                                    </span>
-                                                                    <span
-                                                                        className={styles.mobileIcon}
-                                                                        onClick={() => openDeleteModal(log._id)}
-                                                                    >
-                                                                        🗑️
-                                                                    </span>
+                                                                    <span onClick={() => router.push(`/home?date=${log.date}`)} className={styles.iconBtn}>✏️</span>
+                                                                    <span onClick={() => { setSelectedId(log._id); setIsModalOpen(true); }} className={styles.iconBtn}>🗑️</span>
                                                                 </div>
                                                             </div>
                                                         </td>
@@ -225,18 +171,7 @@ const History = () => {
                                         </React.Fragment>
                                     ))
                                 ) : (
-                                    <tr>
-                                        <td
-                                            colSpan="7"
-                                            style={{
-                                                textAlign: "center",
-                                                padding: "30px",
-                                                color: "#999",
-                                            }}
-                                        >
-                                            No Records Found
-                                        </td>
-                                    </tr>
+                                    <tr><td colSpan="7" style={{ textAlign: "center", padding: "30px", color: "#999" }}>No Records Found</td></tr>
                                 )}
                             </tbody>
                         </table>
@@ -247,13 +182,9 @@ const History = () => {
                     <Pagination
                         currentPage={currentPage}
                         totalPages={totalPages}
-                        onPageChange={(p) => setCurrentPage(p)}
+                        onPageChange={setCurrentPage}
                         rowsPerPage={rowsPerPage}
-                        onRowsChange={(v) => {
-                            setRowsPerPage(v);
-                            setCurrentPage(1);
-                            setCookie("rowsPerPage", v);
-                        }}
+                        onRowsChange={(v) => { setRowsPerPage(v); setCurrentPage(1); setCookie("rowsPerPage", v); }}
                     />
                 )}
             </div>
