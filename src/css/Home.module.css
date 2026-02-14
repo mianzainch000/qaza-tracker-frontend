@@ -1,0 +1,294 @@
+.pageWrapper {
+  display: contents;
+}
+
+.homeMainContainer {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.homeHeader {
+  padding: 5px 0;
+  text-align: center;
+}
+
+.homeHeader h2 {
+  margin: 0;
+  font-size: 1.1rem;
+  color: var(--secondary);
+}
+
+.formSection {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.card {
+  width: 100%;
+  padding: 12px;
+  box-shadow: var(--shadow);
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  border: 1px solid var(--border-color);
+}
+
+.datePickerContainer {
+  gap: 3px;
+  display: flex;
+  margin-bottom: 10px;
+  flex-direction: column;
+}
+
+.dateInput {
+  padding: 8px;
+  outline: none;
+  font-size: 0.85rem;
+  border-radius: 8px;
+  color: var(--text-main);
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+}
+
+.grid {
+  gap: 6px;
+  display: grid;
+  grid-template-columns: 1fr;
+}
+
+.counterItem {
+  display: flex;
+  padding: 8px 12px;
+  align-items: center;
+  border-radius: 10px;
+  justify-content: space-between;
+  background-color: var(--bg-color);
+  border: 1px solid var(--border-color);
+}
+
+.namazTitle {
+  font-weight: 800;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.controls {
+  gap: 10px;
+  display: flex;
+  align-items: center;
+}
+
+.btn {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  font-size: 1rem;
+  cursor: pointer;
+  border-radius: 50%;
+  align-items: center;
+  transition: all 0.2s;
+  justify-content: center;
+  color: var(--text-main);
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+}
+
+.btn:active {
+  transform: scale(0.9);
+  background-color: var(--primary-lightest);
+}
+
+.count {
+  min-width: 15px;
+  font-size: 1rem;
+  font-weight: 700;
+  text-align: center;
+  color: var(--text-main);
+}
+
+.saveBtn {
+  width: 100%;
+  border: none;
+  padding: 12px;
+  cursor: pointer;
+  margin-top: 12px;
+  font-weight: bold;
+  font-size: 0.9rem;
+  color: var(--card-bg);
+  transition: opacity 0.2s;
+  background: var(--secondary);
+  border-radius: var(--radius);
+}
+
+.saveBtn:hover {
+  opacity: 0.9;
+}
+
+.motivationCard {
+  width: 100%;
+  display: flex;
+  padding: 16px;
+  align-items: center;
+  margin-bottom: 25px;
+  transition: all 0.3s ease;
+  border-radius: var(--radius);
+}
+
+.pending {
+  background: var(--warning-light);
+  border: 1px solid var(--warning);
+  color: var(--secondary);
+  animation: softPulse 2s infinite;
+}
+
+.completed {
+  color: var(--primary);
+  background: var(--primary-bg);
+  border: 1px solid var(--primary-light);
+}
+
+.streakIcon {
+  font-size: 2rem;
+  margin-right: 15px;
+}
+
+.streakText h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  color: var(--text-main);
+}
+
+.streakText p {
+  margin: 2px 0 0;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+@keyframes softPulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.02);
+    opacity: 0.9;
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@media (max-height: 750px) {
+  .homeHeader {
+    padding: 0;
+  }
+  .card {
+    padding: 10px;
+  }
+  .counterItem {
+    padding: 6px 10px;
+  }
+  .saveBtn {
+    padding: 10px;
+    margin-top: 8px;
+  }
+  .datePickerContainer {
+    margin-bottom: 5px;
+  }
+}
+
+/* Motivation Card */
+
+.motivationCard {
+  gap: 15px;
+  display: flex;
+  padding: 20px;
+  margin-bottom: 25px;
+  border-radius: var(--radius);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.pending {
+  background: var(--warning-light);
+  border: 1px solid var(--warning);
+  animation: softPulse 2s infinite;
+}
+
+.completed {
+  background: var(--primary-bg);
+  border: 1px solid var(--primary-light);
+}
+
+.streakIcon {
+  display: flex;
+  font-size: 2.5rem;
+  align-items: center;
+  justify-content: center;
+}
+
+.streakContent {
+  flex: 1;
+}
+
+.streakHeader h3 {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: var(--text-main);
+}
+
+.streakHeader p {
+  margin: 2px 0 0;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.quoteBox {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px dashed rgba(0, 0, 0, 0.15);
+}
+
+.urduText {
+  margin: 0;
+  display: block;
+  line-height: 1.6;
+  font-weight: bold;
+  text-align: right;
+  font-size: 1.25rem;
+  color: var(--secondary);
+}
+
+.romanText {
+  opacity: 0.8;
+  font-size: 0.8rem;
+  margin: 6px 0 2px;
+  font-style: italic;
+  color: var(--text-main);
+}
+
+.quoteBox small {
+  opacity: 0.6;
+  display: block;
+  text-align: right;
+  font-size: 0.7rem;
+}
+
+@keyframes softPulse {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  }
+  50% {
+    transform: scale(1.02);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  }
+}

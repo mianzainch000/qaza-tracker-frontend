@@ -1,0 +1,205 @@
+.pageWrapper {
+  display: contents;
+}
+
+.homeMainContainer {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.tableContainer {
+  width: 100%;
+  overflow: hidden;
+  border-radius: 20px;
+  box-shadow: var(--shadow);
+  background: var(--card-bg);
+}
+
+.header {
+  padding: 15px;
+  text-align: center;
+  background: var(--card-bg);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.header h3 {
+  color: var(--secondary);
+}
+
+.filterSection {
+  padding: 15px;
+  display: flex;
+  justify-content: center;
+  background: var(--bg-color);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.filterCard {
+  gap: 10px;
+  width: 100%;
+  display: flex;
+  max-width: 350px;
+  padding: 8px 15px;
+  align-items: center;
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  border: 1px solid var(--border-color);
+}
+
+.filterLabel {
+  font-weight: 800;
+  font-size: 0.7rem;
+  color: var(--text-muted);
+}
+
+.filterInput {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-weight: 700;
+  background: transparent;
+  color: var(--text-main);
+}
+
+.clearBtn {
+  border: none;
+  cursor: pointer;
+  background: none;
+  font-weight: bold;
+  color: var(--danger);
+}
+
+/* Table General */
+.historyTable {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.desktopCell {
+  padding: 15px 10px;
+  text-align: center;
+  color: var(--text-main);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.desktopOnlyHead th {
+  padding: 15px;
+  font-size: 0.8rem;
+  background: var(--bg-color);
+  color: var(--primary-light);
+  border-bottom: 2px solid var(--border-color);
+}
+
+.dateCell {
+  text-align: left !important;
+  padding-left: 25px !important;
+}
+
+.dateText {
+  font-weight: 800;
+  font-size: 0.9rem;
+  color: var(--secondary);
+}
+
+.statusComplete {
+  padding: 2px 8px;
+  font-size: 0.6rem;
+  font-weight: bold;
+  border-radius: 5px;
+  color: var(--card-bg);
+  background: var(--primary-light);
+}
+
+.statusPending {
+  padding: 2px 8px;
+  font-size: 0.6rem;
+  font-weight: bold;
+  border-radius: 5px;
+  color: var(--card-bg);
+  background: var(--warning);
+}
+
+.countDone {
+  font-weight: 800;
+  color: var(--primary-light);
+}
+
+.countZero {
+  color: var(--neutral-light);
+}
+
+.actionBtns {
+  gap: 15px;
+  display: flex;
+  justify-content: center;
+}
+
+.iconBtn {
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.iconBtn:hover {
+  transform: scale(1.2);
+}
+
+.mobileCardCell {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .homeMainContainer {
+    padding: 10px;
+    margin-left: 0;
+    margin-bottom: 70px;
+  }
+  .desktopOnlyHead,
+  .desktopCell {
+    display: none;
+  }
+  .mobileCardCell {
+    padding: 10px;
+    display: block;
+    background: var(--bg-color);
+  }
+
+  .mobileCard {
+    padding: 15px;
+    border-radius: 15px;
+    box-shadow: var(--shadow);
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+  }
+  .cardHeader {
+    display: flex;
+    margin-bottom: 10px;
+    justify-content: space-between;
+  }
+  .cardDate {
+    font-weight: 800;
+    color: var(--secondary);
+  }
+  .cardBody {
+    display: flex;
+    padding: 10px;
+    border-radius: 10px;
+    background: var(--bg-color);
+    justify-content: space-between;
+  }
+  .miniStat span {
+    display: block;
+    font-size: 0.6rem;
+    color: var(--text-muted);
+  }
+  .miniStat b {
+    font-size: 1rem;
+    color: var(--primary-light);
+  }
+  .cardActions {
+    gap: 20px;
+    display: flex;
+    margin-top: 10px;
+    justify-content: flex-end;
+  }
+}
