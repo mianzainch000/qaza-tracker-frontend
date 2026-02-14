@@ -1,6 +1,7 @@
 "use client";
 import axios from "axios";
 import Loader from "@/components/Loader";
+import Badges from "@/components/Badges";
 import styles from "@/css/Home.module.css";
 import QazaForm from "@/components/QazaForm";
 import { useSnackbar } from "@/components/Snackbar";
@@ -137,6 +138,10 @@ const HomeContent = () => {
                 {/* 🎯 Motivation Card */}
 
                 <MotivationCard streak={streak} todayDone={todayDone} />
+
+                {/* Badges  */}
+
+                <Badges streak={streak} allLogs={allLogs} />
 
                 <div className={styles.formSection}>
                     <QazaForm

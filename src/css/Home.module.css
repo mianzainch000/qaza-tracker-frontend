@@ -292,3 +292,37 @@
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
   }
 }
+/* Badge */
+
+.badgeSection {
+  margin-top: 25px;
+  background: white;
+  padding: 15px;
+  border-radius: 15px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.badgeGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.badgeItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 0.7rem;
+  text-align: center;
+}
+
+.badgeEmoji {
+  font-size: 1.8rem;
+  margin-bottom: 5px;
+}
+
+.locked {
+  filter: grayscale(1);
+  opacity: 0.4;
+}
