@@ -167,27 +167,53 @@ const HomeContent = () => {
     };
 
     // Streak Logic
+    // ✅ Streak Logic (Final Fix)
     const { streak, todayDone } = (() => {
         if (!allLogs || allLogs.length === 0) return { streak: 0, todayDone: false };
+
         const today = getLocalDate();
-        const validLogs = allLogs.filter((log) => log.date <= today);
-        const sortedLogs = [...validLogs].sort((a, b) => new Date(b.date) - new Date(a.date));
-        const todayLog = sortedLogs.find((l) => l.date === today);
-        const todayDone = todayLog ? Object.values(todayLog.data).reduce((a, b) => a + b, 0) > 0 : false;
 
-        let streak = 0;
-        let checkDate = new Date();
-        if (!todayDone) checkDate.setDate(checkDate.getDate() - 1);
+        // 1. Sirf wo logs nikalien jin mein waqayi namaz parhi gayi ho (Total > 0)
+        const activeLogs = allLogs.filter(log => {
+            const total = Number(log.data.fajr || 0) +
+                Number(log.data.zohar || 0) +
+                Number(log.data.asar || 0) +
+                Number(log.data.maghrib || 0) +
+                Number(log.data.isha || 0);
+            return total > 0;
+        });
 
-        while (streak < allLogs.length + 1) {
-            const dateStr = checkDate.toISOString().split("T")[0];
-            const found = sortedLogs.find((l) => l.date === dateStr);
-            if (found && Object.values(found.data).reduce((a, b) => a + b, 0) > 0) {
-                streak++;
-                checkDate.setDate(checkDate.getDate() - 1);
-            } else break;
+        // 2. Aaj ka kaam check karein
+        const todayLog = activeLogs.find(l => l.date === today);
+        const todayDone = !!todayLog;
+
+        let currentStreak = 0;
+        let checkDate = new Date(); // Browser ka current local time
+
+        // Agar aaj ka kaam nahi hua, toh kal se peeche check karna shuru karein
+        if (!todayDone) {
+            checkDate.setDate(checkDate.getDate() - 1);
         }
-        return { streak, todayDone };
+
+        // 3. Loop chala kar peeche ki dates check karein
+        while (true) {
+            // Local date string nikalne ka sab se behtar tareeka (YYYY-MM-DD)
+            const y = checkDate.getFullYear();
+            const m = String(checkDate.getMonth() + 1).padStart(2, "0");
+            const d = String(checkDate.getDate()).padStart(2, "0");
+            const dateStr = `${y}-${m}-${d}`;
+
+            const found = activeLogs.find(l => l.date === dateStr);
+
+            if (found) {
+                currentStreak++;
+                checkDate.setDate(checkDate.getDate() - 1); // Ek din aur peeche jayein
+            } else {
+                break; // Jahan gap aaya, streak ruk gayi
+            }
+        }
+
+        return { streak: currentStreak, todayDone };
     })();
 
     return (
