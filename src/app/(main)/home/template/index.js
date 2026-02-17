@@ -35,7 +35,11 @@ const HomeContent = () => {
     const [allLogs, setAllLogs] = useState([]);
     const [selectedDate, setSelectedDate] = useState(editDate || getLocalDate());
     const [counts, setCounts] = useState({
-        fajr: 0, zohar: 0, asar: 0, maghrib: 0, isha: 0,
+        fajr: 0,
+        zohar: 0,
+        asar: 0,
+        maghrib: 0,
+        isha: 0,
     });
 
     const [notifPermission, setNotifPermission] = useState("default");
@@ -68,16 +72,20 @@ const HomeContent = () => {
                     const token = getCookie("sessionToken");
                     // 1. Pehle DB se is specific user ki settings mangwao
                     const res = await axios.get("/home/api", {
-                        headers: { Authorization: `Bearer ${token}` }
+                        headers: { Authorization: `Bearer ${token}` },
                     });
 
                     // 2. Phir usi user ke data ke sath subscription sync karo
-                    await axios.post("/home/api", {
-                        subscription: sub,
-                        reminderTimes: res.data?.reminderTimes || ["21:00"]
-                    }, {
-                        headers: { Authorization: `Bearer ${token}` }
-                    });
+                    await axios.post(
+                        "/home/api",
+                        {
+                            subscription: sub,
+                            reminderTimes: res.data?.reminderTimes || ["21:00"],
+                        },
+                        {
+                            headers: { Authorization: `Bearer ${token}` },
+                        },
+                    );
                     console.log("User-specific subscription synced! ✅");
                 }
             } catch (err) {
@@ -90,7 +98,10 @@ const HomeContent = () => {
 
     const toggleNotifications = async () => {
         if (!("Notification" in window)) {
-            showAlert({ message: "Browser doesn't support notifications", type: "error" });
+            showAlert({
+                message: "Browser doesn't support notifications",
+                type: "error",
+            });
             return;
         }
 
@@ -107,7 +118,10 @@ const HomeContent = () => {
             if (permission === "granted") {
                 try {
                     await initPushNotification();
-                    showAlert({ message: "Notifications Enabled Successfully! ✅", type: "success" });
+                    showAlert({
+                        message: "Notifications Enabled Successfully! ✅",
+                        type: "success",
+                    });
                 } catch (err) {
                     showAlert({ message: "Failed to sync subscription", type: "error" });
                 }
@@ -120,14 +134,18 @@ const HomeContent = () => {
             if (isInitial) setLoading(true);
             const token = getCookie("sessionToken");
             const res = await axios.get("/home/api", {
-                headers: { Authorization: `Bearer ${token}` }
+                headers: { Authorization: `Bearer ${token}` },
             });
 
             if (res?.status === 200) {
                 const logs = res.data.data || [];
                 setAllLogs(logs);
                 const existingData = logs.find((item) => item.date === selectedDate);
-                setCounts(existingData ? existingData.data : { fajr: 0, zohar: 0, asar: 0, maghrib: 0, isha: 0 });
+                setCounts(
+                    existingData
+                        ? existingData.data
+                        : { fajr: 0, zohar: 0, asar: 0, maghrib: 0, isha: 0 },
+                );
             }
         } catch (error) {
             console.error(handleAxiosError(error).message);
@@ -138,22 +156,35 @@ const HomeContent = () => {
 
     const saveQazaData = async () => {
         try {
-            const total = Object.values(counts).reduce((sum, value) => sum + Number(value), 0);
+            const total = Object.values(counts).reduce(
+                (sum, value) => sum + Number(value),
+                0,
+            );
             if (total === 0) {
-                showAlert({ message: "Please add at least one prayer count!", type: "error" });
+                showAlert({
+                    message: "Please add at least one prayer count!",
+                    type: "error",
+                });
                 return;
             }
 
             setLoading(true);
             const token = getCookie("sessionToken");
-            const res = await axios.post("/home/api", {
-                date: selectedDate,
-                data: counts,
-            }, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
+            const res = await axios.post(
+                "/home/api",
+                {
+                    date: selectedDate,
+                    data: counts,
+                },
+                {
+                    headers: { Authorization: `Bearer ${token}` },
+                },
+            );
 
-            showAlert({ message: res?.data?.message || "Saved Successfully!", type: "success" });
+            showAlert({
+                message: res?.data?.message || "Saved Successfully!",
+                type: "success",
+            });
 
             if (Notification.permission === "default") {
                 await toggleNotifications();
@@ -169,13 +200,15 @@ const HomeContent = () => {
     // Streak Logic
     // ✅ Streak Logic (Final Fix)
     const { streak, todayDone } = (() => {
-        if (!allLogs || allLogs.length === 0) return { streak: 0, todayDone: false };
+        if (!allLogs || allLogs.length === 0)
+            return { streak: 0, todayDone: false };
 
         const today = getLocalDate();
 
         // 1. Sirf wo logs nikalien jin mein waqayi namaz parhi gayi ho (Total > 0)
-        const activeLogs = allLogs.filter(log => {
-            const total = Number(log.data.fajr || 0) +
+        const activeLogs = allLogs.filter((log) => {
+            const total =
+                Number(log.data.fajr || 0) +
                 Number(log.data.zohar || 0) +
                 Number(log.data.asar || 0) +
                 Number(log.data.maghrib || 0) +
@@ -184,7 +217,7 @@ const HomeContent = () => {
         });
 
         // 2. Aaj ka kaam check karein
-        const todayLog = activeLogs.find(l => l.date === today);
+        const todayLog = activeLogs.find((l) => l.date === today);
         const todayDone = !!todayLog;
 
         let currentStreak = 0;
@@ -203,7 +236,7 @@ const HomeContent = () => {
             const d = String(checkDate.getDate()).padStart(2, "0");
             const dateStr = `${y}-${m}-${d}`;
 
-            const found = activeLogs.find(l => l.date === dateStr);
+            const found = activeLogs.find((l) => l.date === dateStr);
 
             if (found) {
                 currentStreak++;
@@ -221,10 +254,18 @@ const HomeContent = () => {
             {loading && <Loader />}
             <div className={styles.homeMainContainer}>
                 <header className={styles.homeHeader}>
-                    <h2>{selectedDate === getLocalDate() ? "Today's Qaza" : `Qaza for ${selectedDate}`}</h2>
+                    <h2>
+                        {selectedDate === getLocalDate()
+                            ? "Today's Qaza"
+                            : `Qaza for ${selectedDate}`}
+                    </h2>
                     <div className={styles.toggleContainer} onClick={toggleNotifications}>
-                        <span style={{ cursor: "pointer" }}>{notifPermission === "granted" ? "🔔" : "🔕"}</span>
-                        <div className={`${styles.toggleSwitch} ${notifPermission === "granted" ? styles.on : ""}`}>
+                        <span style={{ cursor: "pointer" }}>
+                            {notifPermission === "granted" ? "🔔" : "🔕"}
+                        </span>
+                        <div
+                            className={`${styles.toggleSwitch} ${notifPermission === "granted" ? styles.on : ""}`}
+                        >
                             <div className={styles.toggleHandle}></div>
                         </div>
                     </div>
