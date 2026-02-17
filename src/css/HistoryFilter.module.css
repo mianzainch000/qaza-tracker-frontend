@@ -1,0 +1,21 @@
+.filterContainer {
+  width: 100%;
+  margin: 10px 0;
+}
+
+.filterInput {
+  width: 100%;
+  padding: 12px;
+  outline: none;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  box-sizing: border-box;
+  color: var(--text-main);
+  transition: border-color 0.3s;
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+}
+
+.filterInput:focus {
+  border-color: var(--accent-main);
+}

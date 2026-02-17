@@ -1,0 +1,160 @@
+.progressMainArea {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+
+.pageHeader {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.pageHeader h1 {
+  font-size: 1.5rem;
+  color: var(--secondary);
+}
+
+.container {
+  width: 100%;
+  padding: 20px;
+  max-width: 500px;
+  box-shadow: var(--shadow);
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  border: 1px solid var(--border-color);
+}
+
+.achievementBadge {
+  background: linear-gradient(
+    135deg,
+    var(--primary-lightest) 0%,
+    var(--primary-bg) 100%
+  );
+  gap: 15px;
+  display: flex;
+  padding: 15px;
+  align-items: center;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  color: var(--primary);
+  animation: slideIn 0.5s ease-out;
+  border: 2px solid var(--primary-light);
+}
+
+.trophy {
+  font-size: 2rem;
+}
+
+.achievementBadge p {
+  margin: 0;
+  font-size: 0.85rem;
+}
+
+.labelRow {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  justify-content: space-between;
+}
+
+.pctText {
+  font-weight: 800;
+  font-size: 1.3rem;
+  color: var(--primary);
+}
+
+.barOuter {
+  width: 100%;
+  height: 10px;
+  overflow: hidden;
+  border-radius: 10px;
+  background: var(--border-color);
+}
+
+.barInner {
+  height: 100%;
+  transition: width 0.5s;
+  background: var(--primary);
+}
+
+.footerRow {
+  display: flex;
+  margin-top: 5px;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  justify-content: space-between;
+}
+
+.divider {
+  border: 0;
+  margin: 20px 0;
+  border-top: 1px solid var(--border-color);
+}
+
+.breakdownTitle {
+  font-weight: 700;
+  font-size: 0.9rem;
+  margin-bottom: 10px;
+}
+
+.breakdownGrid {
+  gap: 10px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.prayerCard {
+  padding: 10px;
+  border-radius: 8px;
+  background: var(--primary-bg);
+  border: 1px solid var(--border-color);
+}
+
+.pName {
+  font-weight: 700;
+  font-size: 0.8rem;
+}
+
+.pPctBadge {
+  float: right;
+  padding: 2px 5px;
+  font-size: 0.7rem;
+  border-radius: 4px;
+  color: var(--primary);
+  background: var(--primary-lightest);
+}
+
+.pMiniBar {
+  height: 5px;
+  margin: 8px 0;
+  border-radius: 5px;
+  background: var(--border-color);
+}
+
+.pMiniInner {
+  height: 100%;
+  background: var(--primary);
+}
+
+.pCountText {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 480px) {
+  .breakdownGrid {
+    grid-template-columns: 1fr;
+  }
+}
