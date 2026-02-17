@@ -1,0 +1,173 @@
+.authContainer {
+  margin: 0;
+  display: flex;
+  padding: 20px;
+  min-height: 100dvh;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+}
+
+.splitCard {
+  width: 100%;
+  display: flex;
+  max-width: 900px;
+  background: #fff;
+  overflow: hidden;
+  min-height: 500px;
+  border-radius: 15px;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+}
+
+/* Left Side Styling */
+.leftSection {
+  flex: 1;
+  display: flex;
+  padding: 40px;
+  background: #f8f9fa;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+  border-right: 1px solid #eee;
+}
+
+.logoImg {
+  width: 180px;
+  height: auto;
+  margin-bottom: 20px;
+  object-fit: contain;
+}
+
+.welcomeText {
+  color: #333;
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.subText {
+  color: #666;
+  font-size: 14px;
+  text-align: center;
+}
+
+/* Right Side Styling */
+.rightSection {
+  flex: 1;
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.title {
+  color: #1a1a1a;
+  font-size: 24px;
+  font-weight: 600;
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.formGroup {
+  margin-bottom: 20px;
+}
+
+.label {
+  color: #444;
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.input {
+  width: 100%;
+  font-size: 14px;
+  padding: 12px 15px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  transition: all 0.3s ease;
+}
+
+.input:focus {
+  outline: none;
+  border-color: #6a11cb;
+  box-shadow: 0 0 8px rgba(106, 17, 203, 0.2);
+}
+
+.passwordWrapper {
+  display: flex;
+  position: relative;
+  align-items: center;
+}
+
+.togglePassword {
+  right: 12px;
+  border: none;
+  color: #6a11cb;
+  cursor: pointer;
+  background: none;
+  position: absolute;
+}
+
+.button {
+  width: 100%;
+  color: white;
+  border: none;
+  padding: 14px;
+  cursor: pointer;
+  font-weight: 600;
+  margin-top: 10px;
+  border-radius: 8px;
+  transition: transform 0.2s ease;
+  background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+}
+
+.button:hover:not(:disabled) {
+  filter: brightness(1.1);
+  transform: translateY(-2px);
+}
+
+.button:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+.footerLinks {
+  display: flex;
+  font-size: 13px;
+  margin-top: 25px;
+  justify-content: space-between;
+}
+
+.footerLinks a {
+  font-weight: 500;
+  color: #2575fc;
+  text-decoration: none;
+}
+
+.footerLinks a:hover {
+  text-decoration: underline;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .splitCard {
+    max-width: 450px;
+    flex-direction: column;
+  }
+
+  .leftSection {
+    padding: 30px;
+    border-right: none;
+    border-bottom: 1px solid #eee;
+  }
+
+  .logoImg {
+    width: 120px;
+  }
+
+  .rightSection {
+    padding: 30px;
+  }
+}

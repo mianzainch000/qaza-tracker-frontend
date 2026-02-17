@@ -1,0 +1,88 @@
+.modalOverlay {
+  background: rgba(0, 0, 0, 0.6); /* Backdrop dim karne ke liye */
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  position: fixed;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal {
+  border-radius: var(--radius); /* Theme radius */
+  background: var(--card-bg); /* White background */
+  box-shadow: var(--shadow); /* Theme shadow */
+  width: 320px;
+  padding: 25px;
+  position: relative;
+  text-align: center;
+}
+
+.modalTitle {
+  color: var(--secondary); /* Dark blue-grey text */
+  font-weight: 700;
+  font-size: 1.1rem;
+  margin-bottom: 10px;
+}
+
+.modalMessage {
+  color: var(--text-muted); /* Muted grey text */
+  line-height: 1.4;
+  font-size: 0.95rem;
+  margin-bottom: 25px;
+}
+
+.modalActions {
+  gap: 12px;
+  display: flex;
+  justify-content: center;
+}
+
+.closeIcon {
+  top: 15px;
+  right: 15px;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  position: absolute;
+  transition: color 0.2s;
+  background: transparent;
+  color: var(--text-muted);
+}
+
+.closeIcon:hover {
+  color: var(--danger);
+}
+
+.confirmBtn {
+  background: var(--danger); /* Red delete/logout button */
+  flex: 1;
+  border: none;
+  color: white;
+  cursor: pointer;
+  font-weight: 600;
+  padding: 10px 20px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.confirmBtn:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.cancelBtn {
+  flex: 1;
+  cursor: pointer;
+  font-weight: 600;
+  padding: 10px 20px;
+  border-radius: 8px;
+  color: var(--secondary);
+  background: transparent;
+  transition: all 0.2s ease;
+  border: 1px solid var(--border-color);
+}
+
+.cancelBtn:hover {
+  background: var(--bg-color);
+}

@@ -1,0 +1,138 @@
+.card {
+  width: 100%;
+  padding: 24px;
+  display: flex;
+  max-width: 480px;
+  margin: 20px auto;
+  flex-direction: column;
+  box-shadow: var(--shadow);
+  transition: all 0.3s ease;
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  border: 1px solid var(--border-color);
+}
+
+.activeCard {
+  border: 2px solid var(--primary);
+  background: var(--primary-lightest);
+}
+
+/* Status Badge */
+.statusBadge {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 20px;
+  margin-bottom: 15px;
+  align-self: flex-start;
+}
+
+/* Heading */
+.card h3 {
+  font-size: 18px;
+  margin-bottom: 18px;
+  color: var(--secondary);
+}
+
+/* Time Row */
+.timeRow {
+  gap: 10px;
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+/* Time Input */
+.card input[type="time"] {
+  flex: 1;
+  font-size: 14px;
+  padding: 10px 12px;
+  transition: 0.2s ease;
+  color: var(--text-main);
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  border: 1px solid var(--border-color);
+}
+
+.card input[type="time"]:focus {
+  outline: none;
+  border-color: var(--primary-light);
+  box-shadow: 0 0 0 2px var(--primary-bg);
+}
+
+/* General Buttons */
+.card button {
+  border: none;
+  font-size: 14px;
+  cursor: pointer;
+  font-weight: 600;
+  padding: 10px 14px;
+  transition: all 0.2s ease;
+  border-radius: var(--radius);
+}
+
+/* Add Time Button */
+.card button:first-of-type {
+  margin-bottom: 15px;
+  color: var(--primary);
+  background: var(--primary-lightest);
+}
+
+.card button:first-of-type:hover {
+  background: var(--primary-bg);
+}
+
+/* Save Button */
+.card button:last-of-type {
+  color: white;
+  background: var(--primary);
+}
+
+.card button:last-of-type:hover {
+  background: var(--primary-light);
+}
+
+.card button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Delete Button */
+.timeRow button {
+  padding: 8px 10px;
+  background: var(--danger) !important;
+  color: var(--danger-light) !important;
+  border: 1px solid var(--danger-border);
+}
+
+.timeRow button:hover {
+  color: var(--primary-bg) !important;
+  background: var(--danger-light) !important;
+}
+
+.activeBadge {
+  color: var(--primary);
+  background: var(--primary-lightest);
+  border: 1px solid var(--primary-light);
+}
+
+.inactiveBadge {
+  color: var(--warning);
+  background: var(--warning-light);
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .card {
+    padding: 18px;
+  }
+
+  .card h3 {
+    font-size: 16px;
+  }
+
+  .card button {
+    font-size: 13px;
+    padding: 8px 12px;
+  }
+}
