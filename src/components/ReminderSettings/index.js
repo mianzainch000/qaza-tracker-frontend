@@ -5,103 +5,94 @@ import { getCookie, setCookie } from "cookies-next";
 import { useSnackbar } from "@/components/Snackbar";
 import styles from "@/css/ReminderSettings.module.css";
 import handleAxiosError from "@/components/HandleAxiosError";
+import { initPushNotification } from "@/components/Notification";
 
 const ReminderSettings = () => {
     const showAlert = useSnackbar();
     const [loading, setLoading] = useState(false);
-
-    // Default time 21:00 rakha hai agar cookie na mile
     const [reminderTimes, setReminderTimes] = useState(["21:00"]);
+    const [isSaved, setIsSaved] = useState(false);
 
-    // ✅ Page load hote hi Cookie se data uthao
+    // ✅ Hal: Login hote hi API se user ki apni settings lao
     useEffect(() => {
-        const savedTimes = getCookie("userReminderTimes");
-        if (savedTimes) {
+        const fetchUserSettings = async () => {
             try {
-                setReminderTimes(JSON.parse(savedTimes));
-            } catch (e) {
-                console.error("Cookie parse error");
+                const token = getCookie("sessionToken");
+                if (!token) return;
+
+                const res = await axios.get("/home/api", {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+
+                // Agar DB mein settings hain toh wo set karo
+                if (res.data?.reminderTimes && res.data.reminderTimes.length > 0) {
+                    setReminderTimes(res.data.reminderTimes);
+                    setIsSaved(true);
+                } else {
+                    // Agar naya user hai toh default time
+                    setReminderTimes(["21:00"]);
+                    setIsSaved(false);
+                }
+            } catch (err) {
+                console.error("Failed to fetch settings");
             }
-        }
+        };
+
+        fetchUserSettings();
     }, []);
-
-    const addTimeSlot = () => setReminderTimes([...reminderTimes, "12:00"]);
-
-    const removeTimeSlot = (index) => {
-        if (reminderTimes.length > 1) {
-            setReminderTimes(reminderTimes.filter((_, i) => i !== index));
-        }
-    };
-
-    const handleTimeChange = (index, value) => {
-        const updated = [...reminderTimes];
-        updated[index] = value;
-        setReminderTimes(updated);
-    };
 
     const handleSave = async () => {
         try {
             setLoading(true);
             const token = getCookie("sessionToken");
 
+            let sub = null;
+            if (typeof window !== "undefined" && Notification.permission === "granted") {
+                sub = await initPushNotification();
+            }
+
             const res = await axios.post(
                 "/home/api",
-                { reminderTimes: reminderTimes },
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                },
+                { reminderTimes: reminderTimes, subscription: sub },
+                { headers: { Authorization: `Bearer ${token}` } }
             );
 
-            // ✅ Save hone par Cookie update karo (30 din ke liye)
-            setCookie("userReminderTimes", JSON.stringify(reminderTimes), { maxAge: 60 * 60 * 24 * 30 });
-
-            showAlert({ message: res?.data?.message || "Settings Saved! 🔔", type: "success" });
+            setIsSaved(true);
+            showAlert({ message: "Settings Saved! 🔔", type: "success" });
         } catch (error) {
-            const errorMsg = error.response?.data?.message || handleAxiosError(error).message || "Error saving settings.";
-            showAlert({ message: errorMsg, type: "error" });
+            showAlert({ message: handleAxiosError(error).message, type: "error" });
         } finally {
             setLoading(false);
         }
     };
 
+    // Baqi Functions (addTimeSlot, removeTimeSlot, etc.) wahi rahenge jo pehle thay
+    const addTimeSlot = () => { setReminderTimes([...reminderTimes, "12:00"]); setIsSaved(false); };
+    const removeTimeSlot = (index) => { if (reminderTimes.length > 1) { setReminderTimes(reminderTimes.filter((_, i) => i !== index)); setIsSaved(false); } };
+    const handleTimeChange = (index, value) => { const updated = [...reminderTimes]; updated[index] = value; setReminderTimes(updated); setIsSaved(false); };
+
     return (
-        <div className={styles.card}>
-            <div className={styles.titleWrapper}>
-                <span>🔔</span>
-                <h3 className="font-bold">Prayer Reminders</h3>
+        <div className={`${styles.card} ${isSaved ? styles.activeCard : ""}`}>
+            <div className={styles.statusBadge} style={{
+                backgroundColor: isSaved ? '#e6f4ea' : '#fff4e5',
+                color: isSaved ? '#1e7e34' : '#b45309',
+                padding: '6px', borderRadius: '20px', fontSize: '12px', marginBottom: '15px', border: isSaved ? '1px solid #28a745' : '1px solid #fbbf24'
+            }}>
+                {isSaved ? "● Active" : "● Inactive: Click Save"}
             </div>
 
+            <h3 className="font-bold">Prayer Reminders</h3>
+
             {reminderTimes.map((time, index) => (
-                <div key={index} className={styles.timeRow}>
-                    <input
-                        type="time"
-                        value={time}
-                        onChange={(e) => handleTimeChange(index, e.target.value)}
-                        className={styles.inputField}
-                    />
-                    {reminderTimes.length > 1 && (
-                        <button
-                            onClick={() => removeTimeSlot(index)}
-                            className={styles.deleteBtn}
-                        >
-                            🗑️
-                        </button>
-                    )}
+                <div key={index} style={{ display: 'flex', gap: '10px', marginBottom: '10px' }}>
+                    <input type="time" value={time} onChange={(e) => handleTimeChange(index, e.target.value)} />
+                    {reminderTimes.length > 1 && <button onClick={() => removeTimeSlot(index)}>🗑️</button>}
                 </div>
             ))}
 
-            <button onClick={addTimeSlot} className={styles.addBtn}>
-                + Add Another Time
-            </button>
-
-            <button
-                onClick={handleSave}
-                disabled={loading}
-                className={styles.saveBtn}
-            >
-                {loading ? "Saving..." : "Save All Reminders"}
+            <button onClick={addTimeSlot}>+ Add Time</button>
+            <button onClick={handleSave} disabled={loading || isSaved}>
+                {loading ? "Saving..." : isSaved ? "Saved ✨" : "Save Settings"}
             </button>
         </div>
     );

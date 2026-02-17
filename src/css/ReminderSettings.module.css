@@ -59,3 +59,19 @@
   background: var(--primary);
   border-radius: var(--radius);
 }
+
+.saveBtn:disabled {
+  background: #9ca3af;
+  cursor: not-allowed;
+}
+
+/* Success state button */
+.successBtn {
+  background: #28a745 !important;
+  opacity: 1 !important;
+}
+
+.saveBtn:hover:not(:disabled) {
+  background: #4338ca;
+  transform: translateY(-2px);
+}
