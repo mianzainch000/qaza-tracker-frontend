@@ -83,10 +83,36 @@ const ReminderSettings = () => {
         setIsSaved(false);
     };
 
-    const removeTimeSlot = (index) => {
+    const removeTimeSlot = async (index) => {
         if (reminderTimes.length > 1) {
-            setReminderTimes(reminderTimes.filter((_, i) => i !== index));
+            // 1. Pehle local state se delete karein
+            const updatedTimes = reminderTimes.filter((_, i) => i !== index);
+            setReminderTimes(updatedTimes);
+
+            // 2. فورا "isSaved" ko false karein taake user ko pata chale naya data save karna hai
+            // Lekin refresh se bachne ke liye hum auto-save bhi kar sakte hain
             setIsSaved(false);
+
+            // 3. Optional: Agar aap chahte hain ke delete hote hi permanent ho jaye (Auto-Save):
+            try {
+                const token = getCookie("sessionToken");
+
+                // Cookies update karein
+                setCookie("reminderTimes", JSON.stringify(updatedTimes), { maxAge: 30 * 24 * 60 * 60 });
+
+                // Server update karein
+                if (token) {
+                    await axios.post(
+                        "/home/api",
+                        { reminderTimes: updatedTimes },
+                        { headers: { Authorization: `Bearer ${token}` } }
+                    );
+                    setIsSaved(true); // Ab refresh par wapis nahi aayenge
+                    showAlert({ message: "Time deleted successfully! 🗑️", type: "success" });
+                }
+            } catch (error) {
+                console.error("Delete sync failed", error);
+            }
         }
     };
 
