@@ -73,18 +73,14 @@ const ReminderSettings = () => {
 
     return (
         <div className={`${styles.card} ${isSaved ? styles.activeCard : ""}`}>
-            <div className={styles.statusBadge} style={{
-                backgroundColor: isSaved ? '#e6f4ea' : '#fff4e5',
-                color: isSaved ? '#1e7e34' : '#b45309',
-                padding: '6px', borderRadius: '20px', fontSize: '12px', marginBottom: '15px', border: isSaved ? '1px solid #28a745' : '1px solid #fbbf24'
-            }}>
+            <div className={`${styles.statusBadge} ${isSaved ? styles.activeBadge : styles.inactiveBadge}`}>
                 {isSaved ? "● Active" : "● Inactive: Click Save"}
             </div>
 
             <h3 className="font-bold">Prayer Reminders</h3>
 
             {reminderTimes.map((time, index) => (
-                <div key={index} style={{ display: 'flex', gap: '10px', marginBottom: '10px' }}>
+                <div key={index} className={styles.timeRow}>
                     <input type="time" value={time} onChange={(e) => handleTimeChange(index, e.target.value)} />
                     {reminderTimes.length > 1 && <button onClick={() => removeTimeSlot(index)}>🗑️</button>}
                 </div>
@@ -92,7 +88,7 @@ const ReminderSettings = () => {
 
             <button onClick={addTimeSlot}>+ Add Time</button>
             <button onClick={handleSave} disabled={loading || isSaved}>
-                {loading ? "Saving..." : isSaved ? "Saved ✨" : "Save Settings"}
+                {loading ? "Saving..." : isSaved ? "Reminder Saved 🔔" : "Save Reminder"}
             </button>
         </div>
     );
