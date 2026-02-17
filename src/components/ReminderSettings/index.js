@@ -13,28 +13,35 @@ const ReminderSettings = () => {
     const [reminderTimes, setReminderTimes] = useState(["21:00"]);
     const [isSaved, setIsSaved] = useState(false);
 
-    // ✅ Hal: Login hote hi API se user ki apni settings lao
+    // Load saved settings from API or cookies
     useEffect(() => {
         const fetchUserSettings = async () => {
             try {
                 const token = getCookie("sessionToken");
-                if (!token) return;
 
-                const res = await axios.get("/home/api", {
-                    headers: { Authorization: `Bearer ${token}` }
-                });
+                // 1️⃣ Try fetch from server first
+                if (token) {
+                    const res = await axios.get("/home/api", {
+                        headers: { Authorization: `Bearer ${token}` }
+                    });
 
-                // Agar DB mein settings hain toh wo set karo
-                if (res.data?.reminderTimes && res.data.reminderTimes.length > 0) {
-                    setReminderTimes(res.data.reminderTimes);
-                    setIsSaved(true);
-                } else {
-                    // Agar naya user hai toh default time
-                    setReminderTimes(["21:00"]);
-                    setIsSaved(false);
+                    if (res.data?.reminderTimes && res.data.reminderTimes.length > 0) {
+                        setReminderTimes(res.data.reminderTimes);
+                        setIsSaved(true);
+                        setCookie("reminderTimes", JSON.stringify(res.data.reminderTimes), { maxAge: 365 * 24 * 60 * 60 }); // 365 days
+                        return;
+                    }
                 }
+
+                // 2️⃣ If no server data, load from cookie
+                const cookieTimes = getCookie("reminderTimes");
+                if (cookieTimes) {
+                    setReminderTimes(JSON.parse(cookieTimes));
+                    setIsSaved(true);
+                }
+
             } catch (err) {
-                console.error("Failed to fetch settings");
+                console.error("Failed to fetch settings", err);
             }
         };
 
@@ -51,11 +58,16 @@ const ReminderSettings = () => {
                 sub = await initPushNotification();
             }
 
-            const res = await axios.post(
-                "/home/api",
-                { reminderTimes: reminderTimes, subscription: sub },
-                { headers: { Authorization: `Bearer ${token}` } }
-            );
+            if (token) {
+                await axios.post(
+                    "/home/api",
+                    { reminderTimes, subscription: sub },
+                    { headers: { Authorization: `Bearer ${token}` } }
+                );
+            }
+
+            // Always save to cookie as well
+            setCookie("reminderTimes", JSON.stringify(reminderTimes), { maxAge: 30 * 24 * 60 * 60 }); // 30 days
 
             setIsSaved(true);
             showAlert({ message: "Settings Saved! 🔔", type: "success" });
@@ -66,10 +78,24 @@ const ReminderSettings = () => {
         }
     };
 
-    // Baqi Functions (addTimeSlot, removeTimeSlot, etc.) wahi rahenge jo pehle thay
-    const addTimeSlot = () => { setReminderTimes([...reminderTimes, "12:00"]); setIsSaved(false); };
-    const removeTimeSlot = (index) => { if (reminderTimes.length > 1) { setReminderTimes(reminderTimes.filter((_, i) => i !== index)); setIsSaved(false); } };
-    const handleTimeChange = (index, value) => { const updated = [...reminderTimes]; updated[index] = value; setReminderTimes(updated); setIsSaved(false); };
+    const addTimeSlot = () => {
+        setReminderTimes([...reminderTimes, "12:00"]);
+        setIsSaved(false);
+    };
+
+    const removeTimeSlot = (index) => {
+        if (reminderTimes.length > 1) {
+            setReminderTimes(reminderTimes.filter((_, i) => i !== index));
+            setIsSaved(false);
+        }
+    };
+
+    const handleTimeChange = (index, value) => {
+        const updated = [...reminderTimes];
+        updated[index] = value;
+        setReminderTimes(updated);
+        setIsSaved(false);
+    };
 
     return (
         <div className={`${styles.card} ${isSaved ? styles.activeCard : ""}`}>
