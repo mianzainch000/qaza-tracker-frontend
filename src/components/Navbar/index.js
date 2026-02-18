@@ -18,6 +18,7 @@ const Navbar = ({ initialFirstName, initialLastName }) => {
         deleteCookie("sessionToken", { path: "/" });
         deleteCookie("firstName", { path: "/" });
         deleteCookie("lastName", { path: "/" });
+        // deleteCookie("reminderTimes", { path: "/" });
         showAlert({
             message: "✅ Logout successful",
             type: "success",

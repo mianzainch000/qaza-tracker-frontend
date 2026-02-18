@@ -13,40 +13,29 @@ const ReminderSettings = () => {
     const [reminderTimes, setReminderTimes] = useState(["21:00"]);
     const [isSaved, setIsSaved] = useState(false);
 
-    // Load saved settings from API or cookies
     useEffect(() => {
-        const fetchUserSettings = async () => {
+        const fetchFreshData = async () => {
+            const token = getCookie("sessionToken");
+            if (!token) return;
+
             try {
-                const token = getCookie("sessionToken");
+                const res = await axios.get("/home/api", {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
 
-                // 1️⃣ Try fetch from server first
-                if (token) {
-                    const res = await axios.get("/home/api", {
-                        headers: { Authorization: `Bearer ${token}` }
-                    });
-
-                    if (res.data?.reminderTimes && res.data.reminderTimes.length > 0) {
-                        setReminderTimes(res.data.reminderTimes);
-                        setIsSaved(true);
-                        setCookie("reminderTimes", JSON.stringify(res.data.reminderTimes), { maxAge: 365 * 24 * 60 * 60 }); // 365 days
-                        return;
-                    }
-                }
-
-                // 2️⃣ If no server data, load from cookie
-                const cookieTimes = getCookie("reminderTimes");
-                if (cookieTimes) {
-                    setReminderTimes(JSON.parse(cookieTimes));
+                // Agar Database mein alarms mil gaye (User A ke purane wale)
+                if (res.data?.reminderTimes && res.data.reminderTimes.length > 0) {
+                    setReminderTimes(res.data.reminderTimes);
                     setIsSaved(true);
                 }
-
-            } catch (err) {
-                console.error("Failed to fetch settings", err);
+            } catch (error) {
+                console.error("Data recover nahi ho saka", error);
             }
         };
 
-        fetchUserSettings();
+        fetchFreshData();
     }, []);
+
 
     const handleSave = async () => {
         try {
