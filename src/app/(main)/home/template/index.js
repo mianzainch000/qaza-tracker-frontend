@@ -249,6 +249,17 @@ const HomeContent = () => {
         return { streak: currentStreak, todayDone };
     })();
 
+    // ✅ Date change hone par counts update kare
+    useEffect(() => {
+        const existingData = allLogs.find((item) => item.date === selectedDate);
+
+        setCounts(
+            existingData
+                ? existingData.data
+                : { fajr: 0, zohar: 0, asar: 0, maghrib: 0, isha: 0 },
+        );
+    }, [selectedDate, allLogs]);
+
     return (
         <div className={styles.pageWrapper}>
             {loading && <Loader />}
