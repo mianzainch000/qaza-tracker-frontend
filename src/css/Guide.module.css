@@ -1,0 +1,197 @@
+.wrapper {
+  padding: 20px;
+  min-height: 100vh;
+  background-color: #f8fafc;
+  font-family: "Segoe UI", sans-serif;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.header h1 {
+  color: #1e293b;
+  margin-bottom: 5px;
+}
+
+.tabSwitcher {
+  gap: 10px;
+  display: flex;
+  margin-bottom: 25px;
+  justify-content: center;
+}
+
+.tabSwitcher button {
+  cursor: pointer;
+  transition: 0.3s;
+  background: white;
+  padding: 10px 20px;
+  border-radius: 25px;
+  border: 1px solid #ddd;
+}
+
+.tabSwitcher button.activeTab {
+  color: white;
+  background: #43a047;
+  border-color: #43a047;
+}
+
+.grid,
+.imamGrid {
+  gap: 20px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+}
+
+.hadithCard,
+.imamCard {
+  padding: 20px;
+  background: white;
+  border-radius: 15px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.hadithCard:hover,
+.imamCard:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.15);
+}
+
+.bookIcon {
+  font-size: 2rem;
+  margin-bottom: 10px;
+}
+
+.hadithCard small {
+  color: #43a047;
+  font-weight: bold;
+}
+
+.lessonBox {
+  padding: 10px;
+  color: #2e7d32;
+  margin-top: 15px;
+  font-size: 0.9rem;
+  border-radius: 8px;
+  background: #e8f5e9;
+  border-left: 4px solid #43a047;
+}
+
+.maslakTag {
+  padding: 4px 10px;
+  font-size: 0.8rem;
+  border-radius: 5px;
+  background: #f1f5f9;
+  margin-bottom: 10px;
+  display: inline-block;
+}
+
+.imamCard ul {
+  padding-left: 20px;
+}
+
+.imamCard li {
+  color: #475569;
+  margin-bottom: 10px;
+}
+
+.summaryCard {
+  color: white;
+  padding: 25px;
+  margin-top: 30px;
+  text-align: center;
+  background: #1e293b;
+  border-radius: 15px;
+}
+
+.summaryNote {
+  opacity: 0.9;
+  margin-top: 10px;
+  padding-top: 10px;
+  font-size: 0.9rem;
+  border-top: 1px dashed rgba(255, 255, 255, 0.2);
+}
+
+.additionalGrid {
+  gap: 20px;
+  display: grid;
+  margin-bottom: 30px;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+}
+
+.infoCard {
+  padding: 20px;
+  overflow: hidden;
+  background: white;
+  position: relative;
+  border-radius: 15px;
+  border-left: 4px solid #7b1fa2;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.infoCard:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.infoIcon {
+  opacity: 0.8;
+  font-size: 1.8rem;
+  margin-bottom: 10px;
+}
+
+.infoTopic {
+  color: #1e293b;
+  font-weight: 600;
+  font-size: 1.1rem;
+  margin-bottom: 10px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #e9e9e9;
+}
+
+.infoDescription {
+  color: #475569;
+  line-height: 1.6;
+  font-size: 0.95rem;
+}
+
+.tabSwitcher button {
+  gap: 5px;
+  cursor: pointer;
+  transition: 0.3s;
+  font-weight: 500;
+  background: white;
+  padding: 10px 20px;
+  border-radius: 25px;
+  align-items: center;
+  display: inline-flex;
+  border: 1px solid #ddd;
+}
+
+.tabSwitcher button.activeTab {
+  color: white;
+  background: #43a047;
+  border-color: #43a047;
+}
+
+@media (max-width: 600px) {
+  .tabSwitcher {
+    flex-wrap: wrap;
+  }
+
+  .tabSwitcher button {
+    font-size: 0.8rem;
+    padding: 8px 12px;
+  }
+
+  .additionalGrid {
+    grid-template-columns: 1fr;
+  }
+}

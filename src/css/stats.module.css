@@ -1,0 +1,135 @@
+.statsPageWrapper {
+  width: 100%;
+  display: flex;
+  min-height: 100vh;
+  padding: 0px 20px;
+  justify-content: center;
+  background-color: var(--bg-color);
+}
+
+.statsContainer {
+  width: 100%;
+  padding: 35px;
+  max-width: 950px;
+  border-radius: 24px;
+  box-shadow: var(--shadow);
+  background: var(--card-bg);
+}
+
+.headerSection {
+  gap: 15px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-bottom: 35px;
+  justify-content: space-between;
+}
+
+.title {
+  color: var(--secondary);
+  font-weight: 800;
+}
+
+.dropdownGroup {
+  gap: 10px;
+  display: flex;
+}
+
+.selector {
+  outline: none;
+  cursor: pointer;
+  font-weight: 600;
+  padding: 10px 15px;
+  color: var(--text-main);
+  transition: all 0.2s ease;
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  border: 2px solid var(--border-color);
+}
+
+.selector:focus {
+  border-color: var(--primary-light);
+}
+
+.insightCard {
+  padding: 20px;
+  border-radius: 18px;
+  margin-bottom: 30px;
+  color: var(--primary);
+  border-left: 6px solid var(--primary-light);
+  background: linear-gradient(
+    135deg,
+    var(--primary-bg) 0%,
+    var(--primary-lightest) 100%
+  );
+}
+
+.noDataBanner {
+  padding: 20px;
+  text-align: center;
+  border-radius: 18px;
+  margin-bottom: 30px;
+  color: var(--text-muted);
+  background: var(--border-color);
+}
+
+.chartSection {
+  width: 100%;
+  height: 380px;
+  margin-bottom: 40px;
+}
+
+.bottomGrid {
+  gap: 15px;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.dataCard {
+  flex: 1;
+  padding: 20px;
+  min-width: 140px;
+  text-align: center;
+  border-radius: 18px;
+  background: var(--card-bg);
+  transition: transform 0.2s ease;
+  border: 1px solid var(--border-color);
+}
+
+.dataCard:hover {
+  box-shadow: var(--shadow);
+  transform: translateY(-5px);
+}
+
+.statLabel {
+  display: block;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.statValue {
+  display: block;
+  font-size: 26px;
+  margin-top: 5px;
+  font-weight: 800;
+  color: var(--text-main);
+}
+
+@media (max-width: 768px) {
+  .headerSection {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .dropdownGroup {
+    width: 100%;
+  }
+  .selector {
+    flex: 1;
+  }
+  .dataCard {
+    min-width: 45%;
+  }
+}
